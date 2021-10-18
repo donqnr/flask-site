@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}{{ proj['project_name'] }}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <article class="post">
+        <p class="body"> {{ proj['project_description'] }} </p>
+    </article>
+    {% for image in images %}
+      <img src="{{url_for('static', filename='images/' + proj['id']|string + '/' + image)}}" class="img">
+    {% endfor %}
+
+{% endblock %}

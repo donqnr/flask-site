@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Projects{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  {% for proj in projs %}
+    <h3><a href="{{ url_for('project.view', id=proj['id']) }}">{{ proj['project_name'] }}</a></h3>
+  {% endfor %}
+{% endblock %}
