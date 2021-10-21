@@ -8,8 +8,10 @@
 <form method="post">
     <label for="project_name">Project Name</label>
     <input name="project_name" id="project_name" value="{{ request.form['project_name'] }}" required>
-    <label for="project_description">Project description</label>
-    <textarea name="project_description" id="project_description">{{ request.form['project_description'] }}</textarea>
+    <label for="project_description">Short description</label>
+    <textarea name="project_short_desc" id="project_short_desc">{{ request.form['project_short_desc'] }}</textarea>
+    <label for="project_description">Long description</label>
+    <textarea name="project_long_desc" id="project_long_desc">{{ request.form['project_long_desc'] }}</textarea>
     <input type="submit" value="Save">
 </form>
 {% endblock %}

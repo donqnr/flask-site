@@ -6,26 +6,22 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
-from flasksite.db import get_db
+from flasksite import db, Project
 
 bp = Blueprint('project', __name__, url_prefix='/project')
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
-def get_project(id):
-    proj = get_db().execute(
-        'SELECT id, project_name, project_description FROM project'
-        ' WHERE id = ?',
-        (id,)
-    ).fetchone()
-
+def get_project(p_id):
+    proj = Project.query.filter_by(id=p_id).first()
     return proj
 
 @bp.route('/add', methods=('GET', 'POST'))
 def add():
     if request.method == 'POST':
         project_name = request.form['project_name']
-        project_description = request.form['project_description']
+        project_short_desc = request.form['project_short_desc']
+        project_long_desc = request.form['project_long_desc']
         error = None
 
         if not project_name:
@@ -34,13 +30,9 @@ def add():
         if error is not None:
             flash(error)
         else:
-            db = get_db()
-            db.execute(
-                'INSERT INTO project (project_name, project_description)'
-                ' VALUES (?, ?)',
-                (project_name, project_description)
-            )
-            db.commit()
+            p = Project(project_name=project_name,project_short_desc=project_short_desc,project_long_desc=project_long_desc)
+            db.session.add(p)
+            db.session.commit()
 
             return redirect(url_for('index.index'))
     
