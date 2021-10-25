@@ -4,6 +4,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from flask_admin.contrib.fileadmin import FileAdmin
 
 db = SQLAlchemy()
 
@@ -31,6 +32,10 @@ def create_app(test_config=None):
 
     admin = Admin(app, name='fdsfdfds', template_mode='bootstrap3')
     admin.add_view(ModelView(Project, db.session, endpoint="projects"))
+    file_path = os.path.join(os.path.dirname(__file__), 'static')
+    fuck = FileAdmin(file_path, '/static/', name='flsefisfd')
+    fuck.allowed_extensions = ['png', 'jpg', 'gif']
+    admin.add_view(fuck)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -38,7 +43,7 @@ def create_app(test_config=None):
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
-
+        
     # ensure the instance folder exists
     try:
         os.makedirs(app.instance_path)

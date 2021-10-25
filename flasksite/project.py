@@ -16,7 +16,7 @@ def get_project(p_id):
     proj = Project.query.filter_by(id=p_id).first()
     return proj
 
-@bp.route('/add', methods=('GET', 'POST'))
+""" @bp.route('/add', methods=('GET', 'POST'))
 def add():
     if request.method == 'POST':
         project_name = request.form['project_name']
@@ -36,19 +36,21 @@ def add():
 
             return redirect(url_for('index.index'))
     
-    return render_template('project/add.html')
+    return render_template('project/add.html') """
 
 @bp.route('/<int:id>')
 def view(id):
-    images = []
-    try:
-        images = os.listdir('flasksite/static/images/' + str(id))
-    except FileNotFoundError:
-        pass
-
     proj = get_project(id)
+    images = []
 
-    if not proj:
+
+    if proj:
+        try:
+            path = os.path.join(os.path.dirname(__file__), 'static/images/' + str(id))
+            images = os.listdir(path)
+        except FileNotFoundError:
+            pass
+    else:
         flash('No project found by that id')
 
     return render_template('project/view.html', proj=proj, images=images)
