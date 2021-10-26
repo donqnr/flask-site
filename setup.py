@@ -8,5 +8,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'flask',
+        'flask-admin',
+        'flask-sqlalchemy'
     ],
 )
