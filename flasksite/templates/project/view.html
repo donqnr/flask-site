@@ -11,8 +11,16 @@
     <article class="post">
         <p class="body"> {{ proj['project_long_desc'] }} </p>
     </article>
-    {% for image in images %}
-      <img src="{{url_for('static', filename='images/' + proj['id']|string + '/' + image)}}" class="img">
-    {% endfor %}
+
+    <div>    
+      {% for image in images %}
+        <img src="{{url_for('static', filename='images/' + proj['id']|string + '/' + image)}}" class="img">
+      {% endfor %}
+    </div>
+    <div>
+      {% for link in proj['links'] %}
+          <a href="{{ link['link_address'] }}">{{ link['link_address'] }}</a>
+      {% endfor %}
+    </div>
 
 {% endblock %}

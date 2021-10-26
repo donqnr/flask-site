@@ -13,9 +13,14 @@ class Project(db.Model):
     project_name = db.Column(db.String(60))
     project_short_desc = db.Column(db.String(120))
     project_long_desc = db.Column(db.Text)
-
+    links = db.relationship('Link', backref='project', lazy=True)
     def __repr__(self):
         return '<Project %r>' % self.project_name
+
+class Link(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    link_address = db.Column(db.Text)
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'), nullable=False)
 
 def create_app(test_config=None):
     # create and configure the app
@@ -32,6 +37,8 @@ def create_app(test_config=None):
 
     admin = Admin(app, name='fdsfdfds', template_mode='bootstrap3')
     admin.add_view(ModelView(Project, db.session, endpoint="projects"))
+    admin.add_view(ModelView(Link, db.session, endpoint="links"))
+
     file_path = os.path.join(os.path.dirname(__file__), 'static')
     fileadmin_args = FileAdmin(file_path, '/static/', name='flsefisfd')
     fileadmin_args.allowed_extensions = ['png', 'jpg', 'gif']
@@ -50,8 +57,8 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    """ from . import db
-    db.init_app(app) """
+    from . import asdf
+    asdf.init_app(app)
 
     from . import index
     app.register_blueprint(index.bp)

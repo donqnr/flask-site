@@ -42,8 +42,6 @@ def add():
 def view(id):
     proj = get_project(id)
     images = []
-
-
     if proj:
         try:
             path = os.path.join(os.path.dirname(__file__), 'static/images/' + str(id))
