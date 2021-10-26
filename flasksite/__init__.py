@@ -33,9 +33,9 @@ def create_app(test_config=None):
     admin = Admin(app, name='fdsfdfds', template_mode='bootstrap3')
     admin.add_view(ModelView(Project, db.session, endpoint="projects"))
     file_path = os.path.join(os.path.dirname(__file__), 'static')
-    fuck = FileAdmin(file_path, '/static/', name='flsefisfd')
-    fuck.allowed_extensions = ['png', 'jpg', 'gif']
-    admin.add_view(fuck)
+    fileadmin_args = FileAdmin(file_path, '/static/', name='flsefisfd')
+    fileadmin_args.allowed_extensions = ['png', 'jpg', 'gif']
+    admin.add_view(fileadmin_args)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
