@@ -15,5 +15,11 @@ def init_db_command():
     init_db()
     click.echo('Initialized the database.')
 
+@click.command('add-admin')
+@with_appcontext
+def add_admin():
+    click.echo('stuff')
+
 def init_app(app):
     app.cli.add_command(init_db_command)
+    app.cli.add_command(add_admin)
