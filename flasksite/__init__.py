@@ -1,8 +1,9 @@
 import os
 
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from flask_admin import Admin
+import flask_admin as admin
+from flask_admin import helpers, expose
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.contrib.fileadmin import FileAdmin
 from wtforms import form, fields, validators
@@ -54,8 +55,31 @@ class User(db.Model):
 def load_user(user_id):
     return User.get(user_id)
 
+class LoginForm(form.Form):
+    username = fields.StringField(validators=[validators.required()])
+    password = fields.StringField(validators=[validators.required()])
+
+    def validate_login(self, field):
+        user = self.get_user()
+
+    def get_user(self):
+        return db.session.query(User).filter_by(login=self.login.data).first()
+
 class ProjectView(ModelView):
-    pass
+
+    def is_accessible(self):
+        return login.current_user.is_authenticated
+
+class AdminIndex(admin.AdminIndexView):
+    @expose('/')
+    def admin_index(self):
+        if not login.current_user.is_authenticated:
+            return redirect(url_for('.login'))
+        return super(AdminIndex, self).index()
+
+    @expose('/login/', methods=('GET', 'POST'))
+    def login(self):
+        return 'lgoidn'
 
 def create_app(test_config=None):
     # create and configure the app
@@ -72,14 +96,14 @@ def create_app(test_config=None):
 
     login_manager.init_app(app)
 
-    admin = Admin(app, name='fdsfdfds', template_mode='bootstrap3')
-    admin.add_view(ModelView(Project, db.session, endpoint="projects"))
-    admin.add_view(ModelView(Link, db.session, endpoint="links"))
+    admn = admin.Admin(app, name='fdsfdfds', index_view=AdminIndex(), template_mode='bootstrap3')
+    admn.add_view(ModelView(Project, db.session, endpoint="projects"))
+    admn.add_view(ModelView(Link, db.session, endpoint="links"))
 
     file_path = os.path.join(os.path.dirname(__file__), 'static')
     fileadmin_args = FileAdmin(file_path, '/static/', name='flsefisfd')
     fileadmin_args.allowed_extensions = ['png', 'jpg', 'gif']
-    admin.add_view(fileadmin_args)
+    admn.add_view(fileadmin_args)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
