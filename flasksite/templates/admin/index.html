@@ -1,0 +1,34 @@
+
+{% extends 'admin/master.html' %}
+{% block body %}
+{{ super() }}
+<div class="row-fluid">
+
+    <div> 
+        <form method="POST" action="">
+
+            {% if current_user.is_authenticated %}
+                <div>Logged in as {{ current_user.login }}</div>
+                <a class="btn" href="{{ url_for('admin.logout') }}">Log out</a>
+            {% else %}
+            {% for f in form if f.type != 'CSRFTokenField' %}
+            <div class="form-group">
+            {{ f.label }}<br>
+            {{ f }}
+            {% if f.errors %}
+            <ul>
+                {% for e in f.errors %}
+                <li>{{ e }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            </div>
+            {% endfor %}
+            <button class="btn btn-primary" type="submit">Submit</button>
+        </form>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock body %}

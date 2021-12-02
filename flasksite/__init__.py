@@ -1,6 +1,9 @@
 import os
+import re
+from click.types import File
 
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, request
+from flask_login.utils import logout_user
 from flask_sqlalchemy import SQLAlchemy
 import flask_admin as admin
 from flask_admin import helpers, expose
@@ -29,7 +32,7 @@ class Link(db.Model):
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100))
+    login = db.Column(db.String(100))
     password = db.Column(db.String(100))
 
     @property
@@ -53,19 +56,30 @@ class User(db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get(user_id)
+    return db.session.query(User).get(user_id)
 
 class LoginForm(form.Form):
-    username = fields.StringField(validators=[validators.required()])
-    password = fields.StringField(validators=[validators.required()])
+    login = fields.StringField(validators=[validators.required()])
+    password = fields.PasswordField(validators=[validators.required()])
 
     def validate_login(self, field):
         user = self.get_user()
+
+        if user is None:
+            raise validators.ValidationError('no')
+
+        if not check_password_hash(user.password, self.password.data):
+            raise validators.ValidationError('no')
 
     def get_user(self):
         return db.session.query(User).filter_by(login=self.login.data).first()
 
 class ProjectView(ModelView):
+
+    def is_accessible(self):
+        return login.current_user.is_authenticated
+
+class NewFileAdmin(FileAdmin):
 
     def is_accessible(self):
         return login.current_user.is_authenticated
@@ -79,7 +93,20 @@ class AdminIndex(admin.AdminIndexView):
 
     @expose('/login/', methods=('GET', 'POST'))
     def login(self):
-        return 'lgoidn'
+        form = LoginForm(request.form)
+        if helpers.validate_form_on_submit(form):
+            user = form.get_user()
+            login.login_user(user)
+        if login.current_user.is_authenticated:
+            return redirect(url_for('.admin_index'))
+
+        self._template_args['form'] = form
+        return super(AdminIndex, self).index()
+
+    @expose('/logout/')
+    def logout(self):
+        login.logout_user()
+        return redirect(url_for('.login'))
 
 def create_app(test_config=None):
     # create and configure the app
@@ -97,11 +124,11 @@ def create_app(test_config=None):
     login_manager.init_app(app)
 
     admn = admin.Admin(app, name='fdsfdfds', index_view=AdminIndex(), template_mode='bootstrap3')
-    admn.add_view(ModelView(Project, db.session, endpoint="projects"))
-    admn.add_view(ModelView(Link, db.session, endpoint="links"))
+    admn.add_view(ProjectView(Project, db.session,  endpoint="projects"))
+    admn.add_view(ProjectView(Link, db.session,  endpoint="links"))
 
     file_path = os.path.join(os.path.dirname(__file__), 'static')
-    fileadmin_args = FileAdmin(file_path, '/static/', name='flsefisfd')
+    fileadmin_args = NewFileAdmin(file_path, '/static/', name='flsefisfd')
     fileadmin_args.allowed_extensions = ['png', 'jpg', 'gif']
     admn.add_view(fileadmin_args)
 
