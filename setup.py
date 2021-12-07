@@ -9,7 +9,7 @@ setup(
     install_requires=[
         'flask',
         'flask-admin',
-        'flask-sqlalchemy'
+        'flask-sqlalchemy',
         'flask-login'
     ],
 )
