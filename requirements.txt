@@ -2,4 +2,4 @@ flask
 flask-admin
 flask-sqlalchemy
 flask-login
-waitress
+gunicorn
