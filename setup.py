@@ -11,5 +11,6 @@ setup(
         'flask-admin',
         'flask-sqlalchemy',
         'flask-login'
+        'waitress'
     ],
 )
