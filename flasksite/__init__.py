@@ -9,8 +9,7 @@ import flask_admin as admin
 from flask_admin import helpers, expose
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.contrib.fileadmin import FileAdmin
-from wtforms import form, fields
-from wtforms import validators as fuck
+from wtforms import form, fields, validators
 from werkzeug.security import generate_password_hash, check_password_hash
 import flask_login as login
 
@@ -60,17 +59,17 @@ def load_user(user_id):
     return db.session.query(User).get(user_id)
 
 class LoginForm(form.Form):
-    login = fields.StringField(validators=[fuck.required()])
-    password = fields.PasswordField(validators=[fuck.required()])
+    login = fields.StringField(validators=[validators.required()])
+    password = fields.PasswordField(validators=[validators.required()])
 
     def validate_login(self, field):
         user = self.get_user()
 
         if user is None:
-            raise fuck.ValidationError('no')
+            raise validators.ValidationError('no')
 
         if not check_password_hash(user.password, self.password.data):
-            raise fuck.ValidationError('no')
+            raise validators.ValidationError('no')
 
     def get_user(self):
         return db.session.query(User).filter_by(login=self.login.data).first()
