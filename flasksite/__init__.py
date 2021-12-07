@@ -59,8 +59,8 @@ def load_user(user_id):
     return db.session.query(User).get(user_id)
 
 class LoginForm(form.Form):
-    login = fields.StringField('Login', [validators.InputRequired])
-    password = fields.PasswordField('Password', [validators.InputRequired])
+    login = fields.StringField('Login', [validators.InputRequired()])
+    password = fields.PasswordField('Password', [validators.InputRequired()])
 
     def validate_login(self, field):
         user = self.get_user()
