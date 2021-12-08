@@ -115,7 +115,12 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY='dev',
     )
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+
+    uri = os.environ("DATABASE_URL")
+    if uri.startswith("postgres://"):
+        uri = uri.replace("postgres://", "postgresql://", 1)
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = uri
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['FLASK_ADMIN_SWATCH'] = 'darkly'
 
