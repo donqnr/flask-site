@@ -116,7 +116,7 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
     )
 
-    uri = os.environ("DATABASE_URL")
+    uri = os.getenv("DATABASE_URL")  # or other relevant config var
     if uri.startswith("postgres://"):
         uri = uri.replace("postgres://", "postgresql://", 1)
 
