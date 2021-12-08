@@ -13,6 +13,7 @@ from wtforms import form, fields, validators
 from werkzeug.security import generate_password_hash, check_password_hash
 import flask_login as login
 
+basedir = os.path.abspath(os.path.dirname(__file__))
 db = SQLAlchemy()
 login_manager = login.LoginManager()
 
@@ -33,7 +34,7 @@ class Link(db.Model):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(100))
-    password = db.Column(db.String(100))
+    password = db.Column(db.String(256))
 
     @property
     def is_authenticated(self):
@@ -113,9 +114,8 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'flasksite.sqlite'),
     )
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///databse.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['FLASK_ADMIN_SWATCH'] = 'darkly'
 

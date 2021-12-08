@@ -9,6 +9,12 @@ def init_db():
     db.drop_all()
     db.create_all()
 
+@click.command('create-all')
+@with_appcontext
+def create_all_command():
+    db.create_all()
+    click.echo('hjkjj')
+
 @click.command('init-db')
 @with_appcontext
 def init_db_command():
