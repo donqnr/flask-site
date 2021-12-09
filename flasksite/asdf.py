@@ -36,3 +36,4 @@ def init_app(app):
     
     app.cli.add_command(init_db_command)
     app.cli.add_command(add_admin)
+    app.cli.add_command(create_all_command)

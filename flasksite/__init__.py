@@ -116,6 +116,8 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
     )
 
+    # Heroku compatibility thing
+    # Wouldnt have to do this if Heroku would just let me change the DATABASE_URI variable ffs
     uri = os.getenv("DATABASE_URL")  # or other relevant config var
     if uri.startswith("postgres://"):
         uri = uri.replace("postgres://", "postgresql://", 1)
